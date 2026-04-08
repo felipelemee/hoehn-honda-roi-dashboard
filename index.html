@@ -2816,7 +2816,7 @@ function renderBudgetGrid() {
       if (val !== null) { rowTotal += val; colTotals[mi] += val; }
       const cls = isOverride ? 'bg-override' : (!hasData && val === null ? 'bg-no-data' : '');
       const display = val !== null ? '$' + Math.round(val).toLocaleString() : '—';
-      html += `<td class="${cls}" onclick="event.stopPropagation();startBudgetEdit('${vendor}','${m}',this,${val})" title="${m}: ${display}">${display}</td>`;
+      html += `<td class="${cls}" title="${m}: ${display}">${display}</td>`;
     });
     html += `<td>$${Math.round(rowTotal).toLocaleString()}</td></tr>`;
 
@@ -2835,7 +2835,7 @@ function renderBudgetGrid() {
           const val = item ? item[1] : null;
           if (val !== null) subTotal += val;
           const display = val !== null ? '$' + Math.round(val).toLocaleString() : '—';
-          html += `<td onclick="event.stopPropagation();startSEMEdit('${itemName}','${m}',this,${val})">${display}</td>`;
+          html += `<td>${display}</td>`;
         });
         html += `<td>$${Math.round(subTotal).toLocaleString()}</td></tr>`;
       });
@@ -3106,7 +3106,6 @@ function renderVendorList() {
     const color = CH_COLOR[v] || '#9B9590';
     return `<div class="vendor-mgmt-item">
       <span><span class="budget-vendor-dot" style="background:${color}"></span>${v}</span>
-      <button class="vendor-mgmt-remove" onclick="removeVendor('${v.replace(/'/g, "\\'")}')" title="Remove ${v}">&times;</button>
     </div>`;
   }).join('');
 }
@@ -3241,52 +3240,10 @@ document.addEventListener('keydown', function(e) {
     </div>
     <button class="budget-close" onclick="closeBudgetPanel()">&times;</button>
   </div>
-  <div class="budget-toolbar">
-    <button class="budget-btn budget-btn-primary" onclick="toggleBulkEdit()">Bulk Edit</button>
-    <button class="budget-btn" onclick="toggleVendorMgmt()">Vendors</button>
-    <button class="budget-btn budget-btn-green" onclick="exportBudgetJSON()">Push to Excel</button>
-    <span class="budget-toolbar-spacer"></span>
-    <span class="budget-unsaved" id="budgetUnsaved"><span class="budget-unsaved-dot"></span>Overrides active</span>
-    <button class="budget-btn" onclick="clearAllOverrides()" style="color:var(--red);border-color:rgba(226,35,26,0.25)">Clear All</button>
-  </div>
-  <div class="bulk-edit-section" id="bulkEditSection">
-    <div class="bulk-edit-title">Bulk Edit — Apply cost to multiple months</div>
-    <div class="bulk-edit-row">
-      <div class="bulk-edit-field">
-        <label>Vendor</label>
-        <select id="bulkVendor"></select>
-      </div>
-      <div class="bulk-edit-field">
-        <label>From</label>
-        <select id="bulkFrom"></select>
-      </div>
-      <div class="bulk-edit-field">
-        <label>To</label>
-        <select id="bulkTo"></select>
-      </div>
-      <div class="bulk-edit-field">
-        <label>New Cost ($)</label>
-        <input type="number" id="bulkCost" step="0.01" min="0" placeholder="15,199">
-      </div>
-    </div>
-    <div class="bulk-edit-row bulk-edit-note-row">
-      <div class="bulk-edit-field">
-        <label>Note (required)</label>
-        <textarea id="bulkNote" placeholder="Why is this changing? e.g. 'Increased Google Ads per Q2 plan'"></textarea>
-      </div>
-    </div>
-    <div class="bulk-edit-actions">
-      <button class="budget-btn budget-btn-primary" onclick="submitBulkEdit()">Apply</button>
-      <button class="budget-btn" onclick="toggleBulkEdit()">Cancel</button>
-    </div>
-  </div>
-  <div class="vendor-mgmt-section" id="vendorMgmtSection">
-    <div class="vendor-mgmt-title">Manage Paid Vendors</div>
-    <div class="vendor-mgmt-list" id="vendorMgmtList"></div>
-    <div class="vendor-mgmt-add">
-      <input type="text" id="addVendorInput" placeholder="New vendor name..." onkeydown="if(event.key==='Enter')addVendor()">
-      <button class="budget-btn budget-btn-primary" onclick="addVendor()">Add</button>
-      <button class="budget-btn" onclick="toggleVendorMgmt()">Done</button>
+  <div class="budget-toolbar" style="justify-content:center;padding:10px 16px;">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;background:rgba(0,0,0,0.03);border:1px solid var(--border);">
+      <svg width="16" height="16" viewBox="0 0 100 100" fill="none"><path d="M6.017 4.313l55.333-4.087c6.797-.583 8.543-.19 12.817 2.917l17.663 12.443c2.913 2.14 3.883 2.723 3.883 5.053v68.243c0 4.277-1.553 6.807-6.99 7.193L24.467 99.967c-4.08.193-6.023-.39-8.16-3.113L3.3 79.94c-2.333-3.113-3.3-5.443-3.3-8.167V11.113c0-3.497 1.553-6.413 6.017-6.8z" fill="#fff"/><path fill-rule="evenodd" clip-rule="evenodd" d="M61.35.227l-55.333 4.087C1.553 4.7 0 7.617 0 11.113v60.66c0 2.723.967 5.053 3.3 8.167l12.993 16.913c2.137 2.723 4.08 3.307 8.16 3.113l64.257-3.89c5.433-.387 6.99-2.917 6.99-7.193V20.64c0-2.21-.86-2.845-3.45-4.733L74.167 3.14C69.893.227 68.147-.357 61.35.227zM25.723 19.01c-5.527.287-6.78.353-9.94-2.09L8.057 10.68c-1.553-1.36-.78-3.113 5.63-3.5l53.193-3.887c4.467-.387 6.8 1.167 8.543 2.527l9.123 6.61c.39.193 1.36 1.553.193 1.553l-55.06 3.263-.583 1.557v.207zM19.803 88.3V30.367c0-2.53.78-3.697 3.107-3.893L86.05 22.78c2.14-.193 3.107 1.167 3.107 3.693v57.547c0 2.53-1.36 3.89-3.887 4.077l-58.927 3.503c-2.723.193-3.887-.78-3.887-3.3h-2.653zm57.75-54.24c.387 1.75 0 3.5-1.75 3.7l-2.917.58v42.77c-2.527 1.36-4.853 2.14-6.8 2.14-3.107 0-3.883-.973-6.21-3.887l-19.03-29.94v28.97l6.02 1.36s0 3.5-4.857 3.5l-13.39.78c-.39-.78 0-2.723 1.357-3.11l3.497-.95v-38.3L30.48 40.667c-.387-1.75.583-4.277 3.3-4.47l14.357-.967 19.8 30.327v-26.83l-5.047-.58c-.39-2.143 1.163-3.7 3.103-3.89l14.163-.78-.603.583z" fill="#000"/></svg>
+      <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--warm-gray);letter-spacing:0.02em;">Synced from Notion</span>
     </div>
   </div>
   <div class="budget-body">
@@ -3294,27 +3251,6 @@ document.addEventListener('keydown', function(e) {
       <thead id="budgetGridHead"></thead>
       <tbody id="budgetGridBody"></tbody>
     </table>
-    <div class="changelog-section">
-      <div class="changelog-toggle" id="changeLogToggle" onclick="toggleChangeLog()">
-        <span class="changelog-toggle-icon">&#9654;</span>
-        <span class="changelog-title">Change History</span>
-        <span class="changelog-count" id="changeLogCount">0</span>
-      </div>
-      <div class="changelog-list" id="changeLogList"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ NOTE PROMPT MODAL ═══ -->
-<div class="note-modal-overlay" id="noteModalOverlay">
-  <div class="note-modal">
-    <h3>Add a note</h3>
-    <div class="note-modal-sub"></div>
-    <textarea placeholder="Why is this budget changing?"></textarea>
-    <div class="note-modal-actions">
-      <button class="budget-btn" onclick="cancelNote()">Cancel</button>
-      <button class="budget-btn budget-btn-primary" onclick="submitNote()">Save Change</button>
-    </div>
   </div>
 </div>
 
@@ -3322,10 +3258,6 @@ document.addEventListener('keydown', function(e) {
 // Close budget panel on Escape
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape' && budgetPanelOpen) closeBudgetPanel();
-});
-// Note modal Enter to submit
-document.getElementById('noteModalOverlay').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitNote(); }
 });
 </script>
 </body>
